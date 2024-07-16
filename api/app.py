@@ -4,6 +4,11 @@ from scrapper import get_dlb_results, get_nlb_results
 app = Flask(__name__)
 
 
+@app.route("/")
+def index():
+    return "running"
+
+
 @app.route("/latest-results")
 def getLatestResults():
     dlb = get_dlb_results()
