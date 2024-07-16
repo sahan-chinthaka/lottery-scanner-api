@@ -1,21 +1,16 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
+from flask import Flask, jsonify
+from scrapper import get_dlb_results, get_nlb_results
 
-cred = credentials.Certificate("./api/smart-lottery-adminsdk.json")
-firebase_admin.initialize_app(cred,)
-
-store = firestore.client()
-col_ref = store.collection("users")
+app = Flask(__name__)
 
 
-def main():
-    doc_ref = col_ref.document()
-    doc_ref.set(
-        {
-            "name": "Test",
-        },
-    )
+@app.route("/latest-results")
+def getLatestResults():
+    dlb = get_dlb_results()
+    nlb = get_nlb_results()
+
+    return jsonify(nlb + dlb)
 
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
