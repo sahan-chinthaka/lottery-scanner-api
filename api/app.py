@@ -12,5 +12,9 @@ def getLatestResults():
     return jsonify(nlb + dlb)
 
 
+def main(d=True):
+    app.run(debug=d)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()

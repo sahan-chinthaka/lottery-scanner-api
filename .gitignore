@@ -1,4 +1,3 @@
 __pycache__
 .venv
-
-smart-lottery-adminsdk.json
+.env
