@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 def get_nlb_results():
@@ -34,6 +35,46 @@ def get_nlb_results():
                     cur["results"].append(li.text)
 
             results.append(cur)
+    except Exception:
+        pass
+
+    return results
+
+
+def get_dlb_results():
+    results = []
+    try:
+        res = requests.get("https://www.dlb.lk/home/en")
+
+        soup = BeautifulSoup(res.text, "html.parser")
+        result_box = soup.find("div", attrs={"class": "col-md-12 latest_resultbox"})
+        boxes = result_box.findChildren("div", recursive=False)
+
+        for box in boxes:
+            lottery_n_d = box.find("p", attrs={"class": "lottery_n_d"}).text
+
+            pattern = re.compile(r"\s+")
+            lottery_n_d = re.sub(pattern, " ", lottery_n_d)
+
+            name_d, date = lottery_n_d.split(" | ")
+            name, draw = name_d.split(" - ")
+
+            cur = {"name": name, "draw": draw, "date": date, "results": []}
+
+            lis = box.find_all("li")
+
+            for li in lis:
+                txt = li.text.strip()
+                if txt == "":
+                    img = li.find("img")
+                    txt = img["src"][:-4].split("/")[-1]
+                    p = re.compile(r"\d+")
+                    txt = re.sub(p, "", txt)
+
+                cur["results"].append(txt)
+
+            results.append(cur)
+            
     except Exception:
         pass
 
