@@ -2,17 +2,33 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+cookie = "1010"
+
+
+def update_cookie():
+    global cookie
+    res = requests.get("https://www.nlb.lk/English/results")
+
+    mt = re.search(r"\'([a-f0-9]+)\'", res.text)
+
+    cookie = mt.group(1)
+
 
 def get_nlb_results():
+    global cookie
     results = []
 
     try:
         res = requests.get(
             "https://www.nlb.lk/English/results",
             headers={
-                "Cookie": "human=1010",
+                "Cookie": f"human={cookie}",
             },
         )
+
+        if len(res.text) < 1000 and "setCookie" in res.text:
+            update_cookie()
+            return get_nlb_results()
 
         soup = BeautifulSoup(res.text, "html.parser")
         lboxes = soup.find_all("li", attrs={"class": "lbox"})
@@ -25,7 +41,13 @@ def get_nlb_results():
             draw = spans[1].text
             date = spans[2].text
 
-            cur = {"name": name, "draw": draw, "date": date, "results": []}
+            cur = {
+                "name": name,
+                "draw": draw,
+                "date": date,
+                "results": [],
+                "type": "nlb",
+            }
 
             Bs = w0.find_all("ol", attrs={"class": "B"})
 
@@ -59,7 +81,13 @@ def get_dlb_results():
             name_d, date = lottery_n_d.split(" | ")
             name, draw = name_d.split(" - ")
 
-            cur = {"name": name, "draw": draw, "date": date, "results": []}
+            cur = {
+                "name": name,
+                "draw": draw,
+                "date": date,
+                "results": [],
+                "type": "dlb",
+            }
 
             lis = box.find_all("li")
 
@@ -74,7 +102,7 @@ def get_dlb_results():
                 cur["results"].append(txt)
 
             results.append(cur)
-            
+
     except Exception:
         pass
 
