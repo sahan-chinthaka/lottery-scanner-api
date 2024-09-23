@@ -1,6 +1,12 @@
 import cv2
 import numpy as np
 import easyocr
+from .result_corrector import (
+    correct_letter_number,
+    correct_date,
+    correct_number,
+    correct_letter,
+)
 
 
 imgQ_mahajana = cv2.imread("./ml/references/mahajana-sampatha.jpg")
@@ -98,11 +104,11 @@ def extract_mahajana_sampatha(image):
     date_data = sorted(date_data, key=lambda p: p[0][0])
     draw_data = sorted(draw_data, key=lambda p: p[0][0])
 
-    return (
-        list(map(lambda x: x[1], numb_data)),
-        list(map(lambda x: x[1], draw_data)),
-        list(map(lambda x: x[1], date_data)),
-    )
+    return {
+        "numbers": correct_letter_number(list(map(lambda x: x[1], numb_data)), 6, 1),
+        "draw_no": "".join(correct_number(list(map(lambda x: x[1], draw_data)), 4)),
+        "date": correct_date(list(map(lambda x: x[1], date_data))),
+    }
 
 
 def extract_govisetha(image):
@@ -197,13 +203,13 @@ def extract_govisetha(image):
     spec_data = list(sorted(spec_data, key=lambda p: p[0][0]))
     doub_data = list(sorted(doub_data, key=lambda p: p[0][0]))
 
-    return (
-        list(map(lambda x: x[1], numb_data)),
-        list(map(lambda x: x[1], draw_data)),
-        list(map(lambda x: x[1], date_data)),
-        list(map(lambda x: x[1], spec_data)),
-        list(map(lambda x: x[1], doub_data)),
-    )
+    return {
+        "numbers": correct_letter_number(list(map(lambda x: x[1], numb_data)), 4),
+        "draw_no": "".join(correct_number(list(map(lambda x: x[1], draw_data)), 4)),
+        "date": correct_date(list(map(lambda x: x[1], date_data))),
+        "special_letter": correct_letter(list(map(lambda x: x[1], spec_data))),
+        "double_chance": correct_number(list(map(lambda x: x[1], doub_data)), 5),
+    }
 
 
 def extract_koti_kapruka(image):
@@ -288,9 +294,9 @@ def extract_koti_kapruka(image):
     draw_data = sorted(draw_data, key=lambda p: p[0][0])
     doub_data = sorted(doub_data, key=lambda p: p[0][0])
 
-    return (
-        list(map(lambda x: x[1], numb_data)),
-        list(map(lambda x: x[1], draw_data)),
-        list(map(lambda x: x[1], date_data)),
-        list(map(lambda x: x[1], doub_data)),
-    )
+    return {
+        "numbers": correct_letter_number(list(map(lambda x: x[1], numb_data)), 5),
+        "draw_no": "".join(correct_number(list(map(lambda x: x[1], draw_data)), 4)),
+        "date": correct_date(list(map(lambda x: x[1], date_data))),
+        "double_chance": correct_number(list(map(lambda x: x[1], doub_data)), 6),
+    }

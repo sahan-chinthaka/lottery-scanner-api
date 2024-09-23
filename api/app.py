@@ -41,7 +41,7 @@ def scanImage():
         {
             "file": image.filename,
             "type": lottery_type,
-            "data": list(res),
+            "data": res,
         }
     )
 
