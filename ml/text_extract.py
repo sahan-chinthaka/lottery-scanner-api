@@ -55,14 +55,8 @@ def extract_mahajana_sampatha(image):
     )
 
     M, _ = cv2.findHomography(srcPoints, dstPoints, cv2.RANSAC, 5.0)
-
     imgScan = cv2.warpPerspective(imgC, M, (w_mahajana, h_mahajana))
-
     result = reader.readtext(imgScan)
-
-    # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
 
     for bbox, text, _ in result:
         top_left = bbox[0]
@@ -104,18 +98,18 @@ def extract_mahajana_sampatha(image):
     date_data = sorted(date_data, key=lambda p: p[0][0])
     draw_data = sorted(draw_data, key=lambda p: p[0][0])
 
-    numbers = " ".join(list(map(lambda x: x[1], numb_data)))
-    draw_number = "".join(list(map(lambda x: x[1], draw_data)))
-    date = "".join(list(map(lambda x: x[1], date_data)))
-
-    return numbers.split(" "), draw_number, date
+    return (
+        list(map(lambda x: x[1], numb_data)),
+        list(map(lambda x: x[1], draw_data)),
+        list(map(lambda x: x[1], date_data)),
+    )
 
 
 def extract_govisetha(image):
     area_draw = [105, 590], [165, 635]
     area_date = [105, 555], [245, 600]
     area_numb = [20, 400], [400, 455]
-    area_spec = [330, 560], [395, 625]
+    area_spec = [320, 550], [400, 630]
     area_doub = [200, 500], [350, 555]
 
     draw_data = []
@@ -143,14 +137,7 @@ def extract_govisetha(image):
     M, _ = cv2.findHomography(srcPoints, dstPoints, cv2.RANSAC, 5.0)
 
     imgScan = cv2.warpPerspective(imgC, M, (w_govisetha, h_govisetha))
-
     result = reader.readtext(imgScan)
-
-    # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_spec, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
 
     for bbox, text, _ in result:
         top_left = bbox[0]
@@ -204,19 +191,19 @@ def extract_govisetha(image):
         except Exception:
             pass
 
-    numb_data = sorted(numb_data, key=lambda p: p[0][0])
-    date_data = sorted(date_data, key=lambda p: p[0][0])
-    draw_data = sorted(draw_data, key=lambda p: p[0][0])
-    spec_data = sorted(spec_data, key=lambda p: p[0][0])
-    doub_data = sorted(doub_data, key=lambda p: p[0][0])
+    numb_data = list(sorted(numb_data, key=lambda p: p[0][0]))
+    date_data = list(sorted(date_data, key=lambda p: p[0][0]))
+    draw_data = list(sorted(draw_data, key=lambda p: p[0][0]))
+    spec_data = list(sorted(spec_data, key=lambda p: p[0][0]))
+    doub_data = list(sorted(doub_data, key=lambda p: p[0][0]))
 
-    numbers = " ".join(list(map(lambda x: x[1], numb_data)))
-    draw_number = "".join(list(map(lambda x: x[1], draw_data)))
-    date = "".join(list(map(lambda x: x[1], date_data)))
-    special = "".join(list(map(lambda x: x[1], spec_data)))
-    double = "".join(list(map(lambda x: x[1], doub_data)))
-
-    return numbers.split(" "), draw_number, date, special, list(double)
+    return (
+        list(map(lambda x: x[1], numb_data)),
+        list(map(lambda x: x[1], draw_data)),
+        list(map(lambda x: x[1], date_data)),
+        list(map(lambda x: x[1], spec_data)),
+        list(map(lambda x: x[1], doub_data)),
+    )
 
 
 def extract_koti_kapruka(image):
@@ -252,16 +239,9 @@ def extract_koti_kapruka(image):
     imgScan = cv2.warpPerspective(imgC, M, (w_koti_kapruka, h_koti_kapruka))
     result = reader.readtext(imgScan)
 
-    # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
-
     for bbox, text, _ in result:
         top_left = bbox[0]
         bottom_right = bbox[2]
-
-        # print(top_left, bottom_right, text)
 
         try:
             imgScan = cv2.rectangle(imgScan, top_left, bottom_right, (255, 255, 255), 5)
@@ -308,9 +288,9 @@ def extract_koti_kapruka(image):
     draw_data = sorted(draw_data, key=lambda p: p[0][0])
     doub_data = sorted(doub_data, key=lambda p: p[0][0])
 
-    numbers = " ".join(list(map(lambda x: x[1], numb_data)))
-    draw_number = "".join(list(map(lambda x: x[1], draw_data)))
-    date = "".join(list(map(lambda x: x[1], date_data)))
-    double = "".join(list(map(lambda x: x[1], doub_data)))
-
-    return numbers.split(" "), draw_number, date, list(double)
+    return (
+        list(map(lambda x: x[1], numb_data)),
+        list(map(lambda x: x[1], draw_data)),
+        list(map(lambda x: x[1], date_data)),
+        list(map(lambda x: x[1], doub_data)),
+    )
