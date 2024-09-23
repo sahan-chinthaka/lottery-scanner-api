@@ -30,7 +30,7 @@ def scanImage():
 
     res = None
 
-    if lottery_type == "Koti Kapurka":
+    if lottery_type == "Koti Kapruka":
         res = extract_koti_kapruka(img)
     elif lottery_type == "Govisetha":
         res = extract_govisetha(img)

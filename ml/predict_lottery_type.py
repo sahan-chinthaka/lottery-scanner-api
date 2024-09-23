@@ -19,7 +19,7 @@ transform = transforms.Compose(
     ]
 )
 
-class_names = ["Govisetha", "Koti Kapurka", "Mahajana Sampatha"]
+class_names = ["Govisetha", "Koti Kapruka", "Mahajana Sampatha"]
 
 
 def predict_lottery_type(frame, model, transform, class_names):
