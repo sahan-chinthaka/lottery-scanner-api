@@ -208,8 +208,8 @@ def extract_govisetha(image):
 
 def extract_koti_kapruka(image):
     area_draw = [320, 560], [400, 600]
-    area_date = [95, 565], [240, 605]
-    area_numb = [5, 470], [410, 525]
+    area_date = [95, 550], [250, 605]
+    area_numb = [5, 470], [410, 535]
     area_doub = [235, 395], [400, 445]
 
     draw_data = []
