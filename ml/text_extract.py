@@ -41,7 +41,6 @@ def extract_mahajana_sampatha(image):
     imgC = np.array(image)
     imgC = imgC[:, :, ::-1].copy()
 
-    imgC = cv2.resize(imgC, (w_mahajana, h_mahajana))
     img = cv2.cvtColor(imgC, cv2.COLOR_BGR2GRAY)
 
     kp2, des2 = orb_mahajana.detectAndCompute(img, None)
@@ -59,11 +58,11 @@ def extract_mahajana_sampatha(image):
 
     imgScan = cv2.warpPerspective(imgC, M, (w_mahajana, h_mahajana))
 
+    result = reader.readtext(imgScan)
+
     # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
-
-    result = reader.readtext(imgScan)
 
     for bbox, text, _ in result:
         top_left = bbox[0]
@@ -115,7 +114,7 @@ def extract_mahajana_sampatha(image):
 def extract_govisetha(image):
     area_draw = [105, 590], [165, 635]
     area_date = [105, 555], [245, 600]
-    area_numb = [50, 400], [400, 455]
+    area_numb = [20, 400], [400, 455]
     area_spec = [330, 560], [395, 625]
     area_doub = [200, 500], [350, 555]
 
@@ -128,7 +127,6 @@ def extract_govisetha(image):
     imgC = np.array(image)
     imgC = imgC[:, :, ::-1].copy()
 
-    imgC = cv2.resize(imgC, (w_govisetha, h_govisetha))
     img = cv2.cvtColor(imgC, cv2.COLOR_BGR2GRAY)
 
     kp2, des2 = orb_govisetha.detectAndCompute(img, None)
@@ -146,13 +144,13 @@ def extract_govisetha(image):
 
     imgScan = cv2.warpPerspective(imgC, M, (w_govisetha, h_govisetha))
 
+    result = reader.readtext(imgScan)
+
     # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_spec, (255, 0, 0), 5)
     # imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
-
-    result = reader.readtext(imgScan)
 
     for bbox, text, _ in result:
         top_left = bbox[0]
@@ -252,13 +250,12 @@ def extract_koti_kapruka(image):
     M, _ = cv2.findHomography(srcPoints, dstPoints, cv2.RANSAC, 5.0)
 
     imgScan = cv2.warpPerspective(imgC, M, (w_koti_kapruka, h_koti_kapruka))
-
-    imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
-    imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
-    imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
-    imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
-
     result = reader.readtext(imgScan)
+
+    # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
+    # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
+    # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
+    # imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
 
     for bbox, text, _ in result:
         top_left = bbox[0]
