@@ -29,7 +29,7 @@ kp1_koti_kapruka, des1_koti_kapruka = orb_koti_kapruka.detectAndCompute(
 reader = easyocr.Reader(["en"], gpu=True)
 
 
-def extract_mahajana_sampatha():
+def extract_mahajana_sampatha(image):
     area_draw = [320, 630], [470, 740]
     area_date = [50, 630], [300, 730]
     area_numb = [30, 505], [430, 630]
@@ -38,7 +38,9 @@ def extract_mahajana_sampatha():
     date_data = []
     numb_data = []
 
-    imgC = cv2.imread("./../model/data/model-3/mahajana-sampatha/527.jpg")
+    imgC = np.array(image)
+    imgC = imgC[:, :, ::-1].copy()
+
     imgC = cv2.resize(imgC, (w_mahajana, h_mahajana))
     img = cv2.cvtColor(imgC, cv2.COLOR_BGR2GRAY)
 
@@ -107,16 +109,10 @@ def extract_mahajana_sampatha():
     draw_number = "".join(list(map(lambda x: x[1], draw_data)))
     date = "".join(list(map(lambda x: x[1], date_data)))
 
-    print(numbers.split(" "))
-    print(draw_number)
-    print(date)
-
-    cv2.imshow("k3", imgScan)
-
-    cv2.waitKey(0)
+    return numbers.split(" "), draw_number, date
 
 
-def extract_govisetha():
+def extract_govisetha(image):
     area_draw = [105, 590], [165, 635]
     area_date = [105, 555], [245, 600]
     area_numb = [50, 400], [400, 455]
@@ -129,7 +125,9 @@ def extract_govisetha():
     spec_data = []
     doub_data = []
 
-    imgC = cv2.imread("./../model/data/model-3/govisetha/1000.jpg")
+    imgC = np.array(image)
+    imgC = imgC[:, :, ::-1].copy()
+
     imgC = cv2.resize(imgC, (w_govisetha, h_govisetha))
     img = cv2.cvtColor(imgC, cv2.COLOR_BGR2GRAY)
 
@@ -220,21 +218,13 @@ def extract_govisetha():
     special = "".join(list(map(lambda x: x[1], spec_data)))
     double = "".join(list(map(lambda x: x[1], doub_data)))
 
-    print(numbers.split(" "))
-    print(draw_number)
-    print(date)
-    print(special)
-    print(list(double))
-
-    cv2.imshow("k3", imgScan)
-
-    cv2.waitKey(0)
+    return numbers.split(" "), draw_number, date, special, list(double)
 
 
-def extract_koti_kapruka():
-    area_draw = [340, 560], [400, 600]
+def extract_koti_kapruka(image):
+    area_draw = [320, 560], [400, 600]
     area_date = [95, 565], [240, 605]
-    area_numb = [30, 470], [410, 525]
+    area_numb = [5, 470], [410, 525]
     area_doub = [235, 395], [400, 445]
 
     draw_data = []
@@ -242,7 +232,9 @@ def extract_koti_kapruka():
     numb_data = []
     doub_data = []
 
-    imgC = cv2.imread("./../model/data/model-3/koti-kapruka/22.jpg")
+    imgC = np.array(image)
+    imgC = imgC[:, :, ::-1].copy()
+
     imgC = cv2.resize(imgC, (w_koti_kapruka, h_koti_kapruka))
     img = cv2.cvtColor(imgC, cv2.COLOR_BGR2GRAY)
 
@@ -261,11 +253,10 @@ def extract_koti_kapruka():
 
     imgScan = cv2.warpPerspective(imgC, M, (w_koti_kapruka, h_koti_kapruka))
 
-    # imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_spec, (255, 0, 0), 5)
-    # imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
+    imgScan = cv2.rectangle(imgScan, *area_date, (255, 0, 0), 5)
+    imgScan = cv2.rectangle(imgScan, *area_draw, (255, 0, 0), 5)
+    imgScan = cv2.rectangle(imgScan, *area_numb, (255, 0, 0), 5)
+    imgScan = cv2.rectangle(imgScan, *area_doub, (255, 0, 0), 5)
 
     result = reader.readtext(imgScan)
 
@@ -273,7 +264,7 @@ def extract_koti_kapruka():
         top_left = bbox[0]
         bottom_right = bbox[2]
 
-        print(top_left, bottom_right, text)
+        # print(top_left, bottom_right, text)
 
         try:
             imgScan = cv2.rectangle(imgScan, top_left, bottom_right, (255, 255, 255), 5)
@@ -325,11 +316,4 @@ def extract_koti_kapruka():
     date = "".join(list(map(lambda x: x[1], date_data)))
     double = "".join(list(map(lambda x: x[1], doub_data)))
 
-    print(numbers.split(" "))
-    print(draw_number)
-    print(date)
-    print(list(double))
-
-    cv2.imshow("k3", imgScan)
-
-    cv2.waitKey(0)
+    return numbers.split(" "), draw_number, date, list(double)
