@@ -1,9 +1,19 @@
-from flask import Flask, jsonify, request
-from scrapper import get_dlb_results, get_nlb_results
-from ml import get_lottery_type
-from ml import extract_koti_kapruka, extract_govisetha, extract_mahajana_sampatha
-from PIL import Image
 import io
+from datetime import datetime, timedelta, timezone
+
+from flask import Flask, jsonify, request
+from PIL import Image
+
+from ml import (
+    extract_govisetha,
+    extract_koti_kapruka,
+    extract_mahajana_sampatha,
+    get_lottery_type,
+)
+from scrapper import get_dlb_results, get_nlb_results
+
+from .firebase import db
+from .util import upload_results
 
 app = Flask(__name__)
 
@@ -15,10 +25,31 @@ def index():
 
 @app.route("/latest-results")
 def getLatestResults():
-    dlb = get_dlb_results()
-    nlb = get_nlb_results()
+    today = datetime.now(timezone.utc).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    day_before_yesterday = today - timedelta(days=2)
 
-    return jsonify(nlb + dlb)
+    data_ref = db.collection("data")
+    query = data_ref.where("date", ">=", day_before_yesterday)
+
+    result = query.stream()
+
+    final = []
+    for doc in result:
+        final.append(doc.to_dict())
+
+    print(f"Result {len(final)}")
+
+    if len(final) == 0:
+        print("Scrapping results")
+        dlb = get_dlb_results()
+        nlb = get_nlb_results()
+        all_res = dlb + nlb
+        upload_results(all_res)
+        return jsonify(all_res)
+
+    return jsonify(final)
 
 
 @app.post("/scan-image")

@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from datetime import datetime
 
 cookie = "1010"
 
@@ -40,6 +41,7 @@ def get_nlb_results():
             name = spans[0].text
             draw = spans[1].text
             date = spans[2].text
+            date = datetime.strptime(date, "%A %B %d, %Y")
 
             cur = {
                 "name": name,
@@ -80,6 +82,7 @@ def get_dlb_results():
 
             name_d, date = lottery_n_d.split(" | ")
             name, draw = name_d.split(" - ")
+            date = datetime.strptime(date, "%Y-%b-%d %A")
 
             cur = {
                 "name": name,

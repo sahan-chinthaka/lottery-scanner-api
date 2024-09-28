@@ -4,3 +4,6 @@ __pycache__
 
 # ML model files
 ml/model/*.pth
+
+# Service account files
+/api/lottery-scanner-app.json
