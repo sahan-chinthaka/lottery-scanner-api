@@ -10,7 +10,7 @@ from ml import (
     extract_mahajana_sampatha,
     get_lottery_type,
 )
-from scrapper import get_dlb_results, get_nlb_results
+from scrapper import get_dlb_results, get_govisetha, get_nlb_results
 
 from .firebase import db
 from .util import upload_results
@@ -21,6 +21,40 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return "running"
+
+
+@app.get("/govisetha/<draw>")
+def getGovisethaResult(draw):
+    govisetha_ref = db.collection("govisetha")
+
+    try:
+        query = govisetha_ref.where("date", "==", datetime.strptime(draw, "%Y-%m-%d"))
+        docs = query.stream()
+    except Exception:
+        query = govisetha_ref.where("draw", "==", draw)
+        docs = query.stream()
+
+    docs_list = [doc.to_dict() for doc in docs]
+
+    if len(docs_list) > 0:
+        return jsonify(docs_list[0])
+
+    res = get_govisetha(draw)
+
+    if res is None:
+        return jsonify({"message": "Not found"})
+
+    draw_no, date, numbers = res
+
+    upl = {
+        "draw": draw_no,
+        "date": datetime.strptime(date, "%A %B %d, %Y"),
+        "numbers": numbers,
+    }
+
+    govisetha_ref.add(upl)
+
+    return jsonify(upl)
 
 
 @app.route("/latest-results")
