@@ -113,12 +113,17 @@ def get_dlb_results():
 
 
 def get_govisetha(draw: str):
+    global cookie
     res = requests.get(
         f"https://www.nlb.lk/English/results/govisetha/{draw}",
         headers={
-            "Cookie": "human=1010",
+            "Cookie": f"human={cookie}",
         },
     )
+
+    if len(res.text) < 1000 and "setCookie" in res.text:
+        update_cookie()
+        return get_govisetha(draw)
 
     soup = BeautifulSoup(res.text, "html5lib")
     lresult = soup.find("div", attrs={"class": "lresult"})
